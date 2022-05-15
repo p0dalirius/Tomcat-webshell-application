@@ -1,0 +1,21 @@
+plugins {
+  id 'war'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  // Java Servlet 4.0 API
+  // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+  providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
+  compile 'org.json:json:20080701'
+}
+
+// Java 8
+sourceCompatibility = 8
+targetCompatibility = 8
+
+// Application
+version = '1.1.0'
