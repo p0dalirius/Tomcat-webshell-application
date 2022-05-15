@@ -77,7 +77,7 @@ _apt:x:100:65534::/nonexistent:/usr/sbin/nologin
 
 When your webshell is active, you can now use the interactive [console.py](console.py) to execute commands and download remote files.
 
-
+https://user-images.githubusercontent.com/79218792/168489455-023b52c5-e8a9-4cd9-96ca-f26c14304236.mp4
 
 ## Development
 
