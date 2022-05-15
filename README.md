@@ -1,7 +1,7 @@
-# Apache Tomcat webshell plugin for RCE
+# Apache Tomcat webshell application for RCE
 
 <p align="center">
-  A webshell plugin and interactive shell for pentesting Apache Tomcat application.
+  A webshell application and interactive shell for pentesting Apache Tomcat servers.
   <br>
   <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/p0dalirius/Tomcat-plugin-webshell">
   <a href="https://twitter.com/intent/follow?screen_name=podalirius_" title="Follow"><img src="https://img.shields.io/twitter/follow/podalirius_?label=Podalirius&style=social"></a>
