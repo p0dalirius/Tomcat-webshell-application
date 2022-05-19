@@ -10,7 +10,8 @@ dependencies {
   // Java Servlet 4.0 API
   // https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
   providedCompile 'jakarta.servlet:jakarta.servlet-api:4.0.2'
-  providedCompile 'org.json:json:20080701'
+  compile 'org.json:json:20080701'
+  compile 'org.apache.commons:commons-lang3:3.10'
 }
 
 // Java 8
@@ -18,4 +19,4 @@ sourceCompatibility = 8
 targetCompatibility = 8
 
 // Application
-version = '1.1.0'
+version = '1.2.0'

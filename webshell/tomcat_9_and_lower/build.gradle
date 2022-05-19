@@ -11,6 +11,7 @@ dependencies {
   // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
   providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
   compile 'org.json:json:20080701'
+  compile 'org.apache.commons:commons-lang3:3.10'
 }
 
 // Java 8
@@ -18,4 +19,4 @@ sourceCompatibility = 8
 targetCompatibility = 8
 
 // Application
-version = '1.1.0'
+version = '1.2.0'

