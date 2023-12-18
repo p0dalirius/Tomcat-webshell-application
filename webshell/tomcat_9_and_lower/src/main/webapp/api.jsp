@@ -19,8 +19,6 @@ private void action_exec(JspWriter writer, String cmd) throws IOException {
     boolean IS_OS_AIX = (OS.indexOf("aix") > 0);
     boolean IS_SOLARIS = (OS.indexOf("sunos") >= 0);
 
-    String[] commands = {"/bin/bash", "-c", cmd};
-
     if (IS_OS_WINDOWS) {
         commands[0] = "cmd.exe";
         commands[1] = "/c";
