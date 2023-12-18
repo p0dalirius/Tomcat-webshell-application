@@ -47,7 +47,6 @@ private void action_exec(JspWriter writer, String cmd) throws IOException {
         result.put("stderr", stderr);
 
         result.write(writer);
-        return result.toString();
     } catch (JSONException e) {
         e.printStackTrace();
     }
