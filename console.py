@@ -154,10 +154,13 @@ if __name__ == '__main__':
         except AttributeError:
             pass
 
-    api_endpoint = detect_api_endpoint(target=options.target, verbose=options.verbose)
+    api_endpoint = detect_api_endpoint(
+        target=options.target, 
+        verbose=options.verbose
+    )
 
     if api_endpoint is not None:
-        print("[+] Using API endpoint '%s'" % api_endpoint)
+        print("[+] Using API endpoint '%s'\n" % api_endpoint)
 
         running = True
         while running:
@@ -176,6 +179,6 @@ if __name__ == '__main__':
                 elif len(args) == 3:
                     remote_download(api_endpoint, remote_path=args[1], local_path=args[2])
             else:
-                remote_exec(options.target, cmd, verbose=options.verbose)
+                remote_exec(api_endpoint, cmd, verbose=options.verbose)
     else:
         print("\n[!] No valid API endpoint detected, exitting...")
