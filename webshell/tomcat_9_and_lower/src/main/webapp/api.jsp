@@ -69,10 +69,17 @@ if (action.equals("exec")) {
     // TODO
     // String path = request.getParameter("path");
     // action_download(out, path);
+    JSONObject result = new JSONObject();
+    result.write(out);
 } else if (action.equals("upload")) {
     // TODO
     // String path = request.getParameter("path");
     // action_upload(out, path);
+    JSONObject result = new JSONObject();
+    result.write(out);
+} else {
+    JSONObject result = new JSONObject();
+    result.write(out);
 }
 %>
 
