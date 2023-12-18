@@ -45,8 +45,7 @@ private void action_exec(String cmd) throws IOException {
         result.put("exec", commands);
         result.put("stdout", stdout);
         result.put("stderr", stderr);
-        
-        response.addHeader("Content-Type", "application/json");
+
         result.write(writer);
         return result.toString();
     } catch (JSONException e) {
