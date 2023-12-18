@@ -9,12 +9,12 @@
   version="4.0">
 
   <servlet>
-    <servlet-name>myjsp</servlet-name>
-    <jsp-file>/myjsp.jsp</jsp-file>
+    <servlet-name>api</servlet-name>
+    <jsp-file>/api.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
-    <servlet-name>myjsp</servlet-name>
-    <url-pattern>/myjsp</url-pattern>
+    <servlet-name>api</servlet-name>
+    <url-pattern>/api</url-pattern>
   </servlet-mapping>
 
 </web-app>

