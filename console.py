@@ -151,10 +151,18 @@ def show_help():
 if __name__ == '__main__':
     options = parseArgs()
 
-    http_proxies = {
-        "http": "http://%s:%d/" % (options.proxy_ip, options.proxy_port),
-        "https": "https://%s:%d/" % (options.proxy_ip, options.proxy_port)
-    }
+    http_proxies = None
+    if options.proxy_ip is not None:
+        if options.proxy_port is not None:
+            http_proxies = {
+                "http": "http://%s:%d/" % (options.proxy_ip, options.proxy_port),
+                "https": "https://%s:%d/" % (options.proxy_ip, options.proxy_port)
+            }
+        else:
+            http_proxies = {
+                "http": "http://%s:80/" % (options.proxy_ip),
+                "https": "https://%s:443/" % (options.proxy_ip)
+            }
 
     if not options.target.startswith("https://") and not options.target.startswith("http://"):
         options.target = "http://" + options.target
