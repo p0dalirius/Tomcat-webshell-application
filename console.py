@@ -38,7 +38,7 @@ readline.set_completer_delims('\n')
 
 
 def parseArgs():
-    print("[+] CLI console for Apache tomcat webshell - by @podalirius_")
+    print("[+] CLI console for Apache tomcat webshell - by Remi GASCOU (Podalirius)")
     print("[+] src: https://github.com/p0dalirius/Tomcat-plugin-webshell\n")
 
     parser = argparse.ArgumentParser(description="Interactive console for Apache Tomcat webshell plugin")
